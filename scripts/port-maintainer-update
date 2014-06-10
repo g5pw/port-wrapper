@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh -f
+# Helps updating a port
+# Depends on port-checksum, cdp and plg
+
+local port_name=$1
+local response
+
+port-exists $port_name || return -1
+
+port info $port_name
+if [[ $? -gt 0 ]]; then
+    return
+fi
+port fetch $port_name
+port-copy-checksum $port_name
+echo -n "Does the checksum looks fine? [Yn] "
+read response
+if [[ $response == "n" ]]; then
+    echo "Ok, check what's wrong and copy the checksum"
+    port lg $port_name
+fi
+port edit $port_name
+port destroot $port_name
+if [[ $? -gt 0 ]]; then
+    echo "Uh, something looks wrong, taking you to the port directory..."
+    port-cd $port_name
+fi
+svn diff $(port file $port_name)
+echo -n "Is the diff OK to commit? [Yn] "
+read response
+if [[ $response == "n" ]]; then
+    echo "Ok, check what's wrong and commit manually"
+    return 1
+fi
+svn commit $(port file $port_name)

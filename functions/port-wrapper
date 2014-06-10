@@ -1,0 +1,65 @@
+#!/usr/bin/env zsh -f
+# This is the main "dispatch" wrapper.
+
+function port-wrapper {
+    local -r CONFIG_FILE=${XDG_CONFIG_HOME:-~/.config}/port-wrapper/aliases.conf
+    local -a NO_ADMIN
+    NO_ADMIN=(cat cd contents dependents deps dir distcheck distfiles echo edit file gohome help info installed lint list livecheck location log logfile notes outdated platform provides rdependents rdeps search space url usage variants version work)
+    readonly NO_ADMIN
+
+    local subcmd i=1
+    local -a args params
+
+    # Env variable to holt the latest arguments to wrapper.
+    typeset -gxa MP_LAST_PORT
+
+    # Check port parameters
+    while [[ $*[$i] == "-*" ]]; do
+	params+=$*[$i]
+	i++
+    done
+
+    subcmd=$*[$i]
+    args=($@[$i+1,-1])
+
+    if [[ -n $DEBUG ]]; then
+	echo "params: $params"
+	echo "subcmd: $subcmd"
+	echo "args: $args"
+    fi
+
+    # if argument is just '.', use argument from last run.
+    if [[ $args[*] == '.' ]]; then
+	args=($MP_LAST_PORT)
+    else
+	MP_LAST_PORT=($args)
+    fi
+
+    # If no subcmd is present, bail out
+    if [[ -z $subcmd ]]; then
+	echo "To open MacPorts in interactive mode, just type 'port'"
+	return 0
+    fi
+
+    # Use gawk to parse aliases file
+    if [[ -r $CONFIG_FILE ]]; then
+	candidate=$(gawk 'BEGIN{FS="\\s*=\\s*"}
+	/^ *#/{ next }
+	$1 ~ /\s*'$subcmd'/{print $2}' $CONFIG_FILE)
+
+	if [[ ! -z $candidate ]]; then
+	    subcmd=$candidate
+	fi
+    fi
+
+    if which port-$subcmd 2>&1 >/dev/null; then
+	port-$subcmd "$args[@]"
+    else
+	local s="sudo"
+	if [[ ${NO_ADMIN[(i)$subcmd]} -le ${#NO_ADMIN} ]] ; then
+	    #command doesn't admin rights
+	    s=""
+	fi
+	$s port "$params[@]" $subcmd "$args[@]"
+    fi
+}
