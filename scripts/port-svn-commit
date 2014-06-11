@@ -4,4 +4,10 @@ local port_name=$1
 
 port-exists $port_name || return -1
 
+warnings=$( port lint --nitpick $port_name 2>&1 G 'Warning' | wc -l )
+if [[ $? -ne 0 || $warnings -ne 0 ]]; then
+    port lint --nitpick $port_name
+    echo "Port lint shows warnings/errors, aborting..."
+    return -1
+fi
 svn commit $(port dir $port_name)
