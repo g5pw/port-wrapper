@@ -17,7 +17,7 @@ echo -n "Does the checksum looks fine? [Yn] "
 read response
 if [[ $response == "n" ]]; then
     echo "Ok, check what's wrong and copy the checksum"
-    port lg $port_name
+    port-lg $port_name
 fi
 port edit $port_name
 sudo port destroot $port_name
