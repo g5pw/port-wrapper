@@ -11,7 +11,7 @@ port info $port_name
 if [[ $? -gt 0 ]]; then
     return
 fi
-port fetch $port_name
+sudo port fetch $port_name
 port-copy-checksum $port_name
 echo -n "Does the checksum looks fine? [Yn] "
 read response
@@ -20,7 +20,7 @@ if [[ $response == "n" ]]; then
     port lg $port_name
 fi
 port edit $port_name
-port destroot $port_name
+sudo port destroot $port_name
 if [[ $? -gt 0 ]]; then
     echo "Uh, something looks wrong, taking you to the port directory..."
     port-cd $port_name
