@@ -43,9 +43,12 @@ function port-wrapper {
 
     # Use gawk to parse aliases file
     if [[ -r $CONFIG_FILE ]]; then
-	candidate=$(gawk 'BEGIN{FS="\\s*=\\s*"}
-	/^ *#/{ next }
-	$1 ~ /\s*'$subcmd'/{print $2}' $CONFIG_FILE)
+	candidate=$(gawk -f - $CONFIG_FILE <<- EOF
+	    BEGIN{FS="[[:space:]]*=[[:space:]]*"}
+	    /^ *#/{ next }
+	    \$1 ~ /[[:space:]]*$subcmd/{print \$2}
+	    EOF
+	)
 
 	if [[ ! -z $candidate ]]; then
 	    subcmd=$candidate
