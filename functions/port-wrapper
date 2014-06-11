@@ -14,9 +14,9 @@ function port-wrapper {
     typeset -gxa MP_LAST_PORT
 
     # Check port parameters
-    while [[ $*[$i] == "-*" ]]; do
+    while [[ $*[$i] == -* ]]; do
 	params+=$*[$i]
-	i++
+	((i++))
     done
 
     subcmd=$*[$i]
