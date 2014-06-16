@@ -1,13 +1,23 @@
 #!/usr/bin/env zsh -f
 
-local port_name=$1
+local -r port_name=$1
+local lint_text
+local -a errors warnings
 
 port-exists $port_name || return -1
 
-warnings=$( port lint --nitpick $port_name 2>&1 G 'Warning' | wc -l )
-if [[ $? -ne 0 || $warnings -ne 0 ]]; then
-    port lint --nitpick $port_name
-    echo "Port lint shows warnings/errors, aborting..."
+lint_text=$(port lint --nitpick $port_name |& grep -E 'Warning|Error')
+warnings=(${(f)$(echo $lint_text | sed -n 's/^Warning: //p')})
+errors=(${(f)$(echo $lint_text | sed -n 's/^Error: //p')})
+if [[ ${#warnings} -gt 0 || ${#errors} -gt 0 ]]; then
+    echo -e "\e[38;5;32m☇ Port lint found error/warnings:\e[0m"
+    for w in $warnings; do
+	echo -e "\t\e[38;5;202m⚠︎ $w\033[0m"
+    done
+    for e in $errors; do
+	echo -e "\t\e[38;5;196m✘ $e\033[0m"
+    done
+    echo "Aborting due to warnings."
     return -1
 fi
 svn commit $(port dir $port_name)
