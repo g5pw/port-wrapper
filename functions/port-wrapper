@@ -31,7 +31,7 @@ function port-wrapper {
     # if argument is just '.', use argument from last run.
     if [[ $args[*] == '.' ]]; then
 	args=($MP_LAST_PORT)
-    else
+    elif port-exists "$args[@]" >& /dev/null; then # Update last port only if it's valid
 	MP_LAST_PORT=($args)
     fi
 
