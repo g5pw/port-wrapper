@@ -4,4 +4,35 @@ local port_name=$1
 
 port-exists $port_name || return -1
 
-port -v checksum $port_name 2>/dev/null | grep --color=never -E '  +(md5|rmd160|sha256) *[0-9a-f]*' | tee >(pbcopy)
+local -a distfiles
+distfiles=("${(f)$(port distfiles $port_name | sed -n 's/\[.*\] *//p')}")
+
+sudo port fetch $port_name
+
+echo "Calculated checksums:"
+
+local checksum="checksums"
+local i=1
+
+local spacer=""
+
+for distfile in $distfiles; do
+    echo "Checksumming $distfile..."
+    rmd=${$(openssl rmd160 $distfile)%%*=}
+    sha=${$(openssl sha256 $distfile)%%*=}
+    if [[ $i -gt 1 ]]; then
+	checksum+="\t"
+    fi
+    if [[ ${#distfiles} -gt 1 ]]; then
+	checksum+="\t\t${distfile%%*/} \\ \n\t"
+	spacer="\t"
+    fi
+    checksum+="$spacer\t\trmd160 $rmd \\ \n"
+    checksum+="$spacer\t\t\tsha256 $sha"
+    if [[ $i -lt ${#distfiles} ]]; then
+	checksum+=" \\ \n"
+    fi
+    ((i++))
+done
+
+echo $checksum | tee >(pbcopy)
