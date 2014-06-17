@@ -10,7 +10,7 @@ function port-wrapper {
     local subcmd i=1
     local -a args params
 
-    # Env variable to holt the latest arguments to wrapper.
+    # Env variable to hold the latest arguments to wrapper.
     typeset -gxa MP_LAST_PORT
 
     # Check port parameters
