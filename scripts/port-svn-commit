@@ -7,9 +7,9 @@ local -a errors warnings
 port-exists $port_name || return -1
 
 lint_text=$(port lint --nitpick $port_name |& grep -E 'Warning|Error')
-warnings=(${(f)$(echo $lint_text | sed -n 's/^Warning: //p')})
-errors=(${(f)$(echo $lint_text | sed -n 's/^Error: //p')})
-if [[ ${#warnings} -gt 0 || ${#errors} -gt 0 ]]; then
+warnings=("${(f)$(echo $lint_text | sed -n 's/^Warning: //p')}")
+errors=("${(f)$(echo $lint_text | sed -n 's/^Error: //p')}")
+if [[ -n "$warnings[*]" || -n "$errors[*]" ]]; then
     echo -e "\e[38;5;32m☇ Port lint found error/warnings:\e[0m"
     for w in $warnings; do
 	echo -e "\t\e[38;5;202m⚠︎ $w\033[0m"
