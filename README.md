@@ -3,7 +3,7 @@
 `port-wrapper` is a script for MacPorts, aimed mainly at maintainers, trying to ease their workflow.
 
 ## What's included?
-Right now the wrapper supports:
+Right now the wrapper supports only ZSH and has:
 
   * Aliases, defined in `$XDG_CONFIG_DIR/port-wrapper/aliases.conf`
   * Auto-sudo on commands requiring it
@@ -23,5 +23,11 @@ To install just execute:
 ```
 make install
 ```
+
+and then add
+```
+source /usr/local/share/port-wrapper/port-wrapper.zsh
+```
+somewhere in your zshrc.
 
 The default prefix is `/usr/local`.
