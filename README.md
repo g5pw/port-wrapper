@@ -6,7 +6,7 @@
 Right now the wrapper supports only ZSH and has:
 
   * Aliases, defined in `$XDG_CONFIG_DIR/port-wrapper/aliases.conf`
-  * Auto-sudo on commands requiring it
+  * Auto-sudo on subcommands requiring it
   * Remembers last port expression, recall using '.'
   * Other scripts:
     * `port-copy-checksum`: prints and copies to system clipboard the port checksum
@@ -26,7 +26,7 @@ make install
 
 and then add
 ```
-source /usr/local/share/port-wrapper/port-wrapper.zsh
+source $PREFIX/share/port-wrapper/port-wrapper.zsh
 ```
 somewhere in your zshrc.
 
