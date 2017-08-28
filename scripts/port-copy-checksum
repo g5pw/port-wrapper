@@ -24,13 +24,13 @@ for distfile in $distfiles; do
 	checksum+="\t"
     fi
     if [[ ${#distfiles} -gt 1 ]]; then
-	checksum+="\t\t${distfile%%*/} \\ \n\t"
+	checksum+="\t\t${distfile%%*/} \\\\\n\t"
 	spacer="\t"
     fi
-    checksum+="$spacer\t\trmd160 $rmd \\ \n"
-    checksum+="$spacer\t\t\tsha256 $sha"
+    checksum+="$spacer\t\t\trmd160 $rmd \\\\\n"
+    checksum+="$spacer\t\t\t\t\tsha256 $sha"
     if [[ $i -lt ${#distfiles} ]]; then
-	checksum+=" \\ \n"
+	checksum+=" \\\\\n"
     fi
     ((i++))
 done
