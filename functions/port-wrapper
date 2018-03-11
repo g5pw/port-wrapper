@@ -63,3 +63,5 @@ function port-wrapper {
 	$s port "$params[@]" $subcmd "$args[@]"
     fi
 }
+
+port-wrapper "$@"

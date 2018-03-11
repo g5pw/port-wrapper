@@ -8,3 +8,5 @@ function port-cd {
 
     cd $(port dir $port_name)
 }
+
+port-cd "$@"
